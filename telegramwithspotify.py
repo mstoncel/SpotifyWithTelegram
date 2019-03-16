@@ -1,13 +1,10 @@
-import sys
 import time
 import requests
 import json
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 from telethon import TelegramClient, events, sync
 
 # https://my.telegram.org
-
 
 class AuthTelegram:
     def __init__(self, api_id:int, api_hash:str):
@@ -19,7 +16,6 @@ class AuthTelegram:
         client = TelegramClient('session_api', self.api_id, self.api_hash)
         client.start()
         return client
-
 
 
 class SpotifyWithTelegram(AuthTelegram):
@@ -34,7 +30,7 @@ class SpotifyWithTelegram(AuthTelegram):
 
     @property
     def sp(self)->object:
-        client_credentials_manager = SpotifyClientCredentials(client_id=self.client_id,
+        client_credentials_manager = spotipy.SpotifyClientCredentials(client_id=self.client_id,
                                                               client_secret=self.client_secret)
         token = client_credentials_manager.get_access_token()
         return spotipy.Spotify(auth=token)
@@ -49,7 +45,7 @@ class SpotifyWithTelegram(AuthTelegram):
     def initial_playlist_tracks(self, playlist_name:str)->dict:
         self.playlist_name = playlist_name
         playlist_tracks = self.sp.user_playlist_tracks(
-            username, self.initial_user_playists())
+            self.personal_user_name, self.initial_user_playists())
         self.payload = playlist_tracks.get('items')
         return playlist_tracks.get('items')
 
@@ -57,3 +53,4 @@ class SpotifyWithTelegram(AuthTelegram):
         for item in self.payload:
                 url = item.get('track').get('album').get('external_urls').get('spotify')
                 self.start_client.send_message(send_username, url)
+
