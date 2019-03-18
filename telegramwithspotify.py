@@ -2,7 +2,9 @@ import time
 import requests
 import json
 import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 from telethon import TelegramClient, events, sync
+from helpers import getFromDict
 
 # https://my.telegram.org
 
@@ -30,7 +32,7 @@ class SpotifyWithTelegram(AuthTelegram):
 
     @property
     def sp(self)->object:
-        client_credentials_manager = spotipy.SpotifyClientCredentials(client_id=self.client_id,
+        client_credentials_manager = SpotifyClientCredentials(client_id=self.client_id,
                                                               client_secret=self.client_secret)
         token = client_credentials_manager.get_access_token()
         return spotipy.Spotify(auth=token)
@@ -51,6 +53,6 @@ class SpotifyWithTelegram(AuthTelegram):
 
     def send_message_user(self, send_username:str)-> None:
         for item in self.payload:
-                url = item.get('track').get('album').get('external_urls').get('spotify')
+                url = getFromDict(item, ['track', 'album', 'external_urls', 'spotify'])
                 self.start_client.send_message(send_username, url)
 
