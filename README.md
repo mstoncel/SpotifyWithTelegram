@@ -1,7 +1,7 @@
 Send spotify detail with Telegram.
 - pip install -r requirements.txt
 
-## Usage
+## Usage --
 ```python
     from telegramwithspotify import SpotifyWithTelegram
     res = SpotifyWithTelegram(client_id = 'xxx', client_secret = 'xxx', 
